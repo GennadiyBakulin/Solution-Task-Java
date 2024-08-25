@@ -6,26 +6,22 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class Logger {
-    private static Logger logger;
-    private static LogLevel logLevel;
+    private static Logger instance;
+    private final LogLevel logLevel;
 
-    private Logger() {
+    private Logger(LogLevel logLevel) {
+        this.logLevel = logLevel;
     }
 
     public static Logger getInstanceLogger(LogLevel level) {
-        if (logger == null) {
-            logger = new Logger();
+        if (instance == null) {
+            instance = new Logger(level);
         }
-        logLevel = level;
-        return logger;
-    }
-
-    public static LogLevel getLogLevel() {
-        return logLevel;
+        return instance;
     }
 
     public void logInfo(String messageError, LogLevel levelError) throws IOException {
-        if (Logger.logLevel.ordinal() <= levelError.ordinal()) {
+        if (this.logLevel.ordinal() <= levelError.ordinal()) {
             try (FileWriter fw = new FileWriter("logInfo.txt", true)) {
                 fw.write(String.join(" ",
                         LocalDate.now().toString(),
